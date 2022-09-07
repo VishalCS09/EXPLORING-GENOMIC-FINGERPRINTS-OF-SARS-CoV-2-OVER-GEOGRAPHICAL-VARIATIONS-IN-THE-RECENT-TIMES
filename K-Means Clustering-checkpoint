@@ -1,0 +1,518 @@
+import matplotlib.lines as mlines
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+import seaborn as sns
+%matplotlib inline
+
+#INDIA#
+tb1 = pd.read_csv('IndiaOutput.csv')
+tb1 = tb1.rename(columns = {"Unnamed: 0" : "Accession"})
+s_tb1=tb1.sample(100,axis=0)
+X = s_tb1.iloc[: , 1:]
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+scaler_India = StandardScaler()
+scaler_India.fit(X)
+scaled_data_India = scaler_India.transform(X)
+pca = PCA(n_components=2)
+pca.fit(scaled_data_India)
+x_pca = pca.transform(scaled_data_India)
+
+import sklearn.metrics as metrics
+import sklearn.cluster as cluster
+
+import xlsxwriter
+workbook = xlsxwriter.Workbook('India_Pca.xlsx')
+worksheet = workbook.add_worksheet()
+row=1
+col=0
+for pc1,pc2 in (x_pca):
+    worksheet.write(row,col,pc1)
+    worksheet.write(row,col+1,pc2)
+    row +=1
+workbook.close()
+
+read_file = pd.read_excel ("India_Pca.xlsx")
+read_file.to_csv ("India_Pca.csv", index = None,header=None)
+
+df_India = pd.read_csv("India_Pca.csv", header=None)
+df_India = df_India.rename(columns={0:"PC1",1:"PC2"})
+df_India.to_csv("India_Pca.csv", index=False)
+
+df_India = pd.read_csv("India_Pca.csv")
+df_India.head()
+
+df_India_Short = df_India[['PC1','PC2']]
+
+import sklearn.cluster as cluster
+import sklearn.metrics as metrics
+for i in range(2,10):
+    labels=cluster.KMeans(n_clusters=i,init="k-means++",random_state=200).fit(df_India_Short).labels_
+    print ("Silhouette score for k(clusters) = "+str(i)+" is "+str(metrics.silhouette_score(df_India_Short,labels,metric="euclidean",sample_size=1000,random_state=200)))
+
+#perforing k-means clustering with k = 5
+kmeans = cluster.KMeans(n_clusters=5,init="k-means++")
+kmeans = kmeans.fit(df_India[['PC1','PC2']])
+
+df_India['Clusters'] = kmeans.labels_
+
+sns.scatterplot(x="PC1", y="PC2",hue = 'Clusters',  data=df_India)
+
+# Elbow Method
+K=range(2,12)
+wss = []
+for k in K:
+    kmeans_I=cluster.KMeans(n_clusters=k,init="k-means++")
+    kmeans_I=kmeans_I.fit(df_India_Short)
+    wss_iter_I = kmeans_I.inertia_
+    wss.append(wss_iter_I)
+
+number_clusters = range(2,12)
+plt.plot(number_clusters,wss)
+plt.title('The Elbow Method')
+plt.xlabel('Number of clusters')
+plt.ylabel('WCSS')
+
+mycenters_I = pd.DataFrame({'Clusters' : K, 'WSS' : wss})
+mycenters_I
+
+# Japan
+tb2 = pd.read_csv('JapanOutput.csv')
+tb2 = tb2.rename(columns = {"Unnamed: 0" : "Accession"})
+s_tb2=tb2.sample(50,axis=0)
+X_Japan = s_tb2.iloc[: , 1:]
+
+scaler_Japan = StandardScaler()
+scaler_Japan.fit(X_Japan)
+scaled_data_Japan = scaler_Japan.transform(X_Japan)
+pca_Japan = PCA(n_components=2)
+pca_Japan.fit(scaled_data_Japan)
+x_pca_Japan = pca_Japan.transform(scaled_data_Japan) 
+
+import xlsxwriter
+workbook = xlsxwriter.Workbook('Japan_Pca.xlsx')
+worksheet = workbook.add_worksheet()
+row=1
+col=0
+for pc1,pc2 in (x_pca_Japan):
+    worksheet.write(row,col,pc1)
+    worksheet.write(row,col+1,pc2)
+    row +=1
+workbook.close()
+
+read_file = pd.read_excel ("Japan_Pca.xlsx")
+read_file.to_csv ("Japan_Pca.csv", index = None,header=None)
+df_Japan = pd.read_csv("Japan_Pca.csv", header=None)
+df_Japan = df_Japan.rename(columns={0:"PC1",1:"PC2"})
+df_Japan.to_csv("Japan_Pca.csv", index=False)
+
+df_Japan = pd.read_csv("Japan_Pca.csv")
+df_Japan.head()
+
+df_Japan_Short = df_Japan[['PC1','PC2']]
+
+import sklearn.cluster as cluster
+import sklearn.metrics as metrics
+for i in range(2,10):
+    labels=cluster.KMeans(n_clusters=i,init="k-means++",random_state=200).fit(df_Japan_Short).labels_
+    print ("Silhouette score for k(clusters) = "+str(i)+" is "+str(metrics.silhouette_score(df_Japan_Short,labels,metric="euclidean",sample_size=1000,random_state=200)))
+ 
+ kmeans_Japan = cluster.KMeans(n_clusters=3,init="k-means++")
+kmeans_Japan = kmeans_Japan.fit(df_Japan[['PC1','PC2']])
+df_Japan['Clusters'] = kmeans_Japan.labels_
+sns.scatterplot(x="PC1", y="PC2",hue = 'Clusters',  data=df_Japan)
+
+K=range(2,12)
+wss = []
+for k in K:
+    kmeans_J=cluster.KMeans(n_clusters=k,init="k-means++")
+    kmeans_J=kmeans_J.fit(df_Japan_Short)
+    wss_iter_J = kmeans_J.inertia_
+    wss.append(wss_iter_J)
+
+number_clusters_Japan = range(2,12)
+plt.plot(number_clusters_Japan,wss)
+plt.title('The Elbow Method')
+plt.xlabel('Number of clusters')
+plt.ylabel('WCSS')
+
+mycenters_J = pd.DataFrame({'Clusters' : K, 'WSS' : wss})
+mycenters_J
+
+#perforing k-means clustering with k = 4
+kmeans_Japan = cluster.KMeans(n_clusters=4,init="k-means++")
+kmeans_Japan = kmeans_Japan.fit(df_Japan[['PC1','PC2']])
+df_Japan['Clusters'] = kmeans_Japan.labels_
+sns.scatterplot(x="PC1", y="PC2",hue = 'Clusters',  data=df_Japan)
+
+# Germany
+tb3 = pd.read_csv('GermanyOutput.csv')
+tb3 = tb3.rename(columns = {"Unnamed: 0" : "Accession"})
+s_tb3=tb3.sample(100,axis=0)
+X_germany = s_tb3.iloc[: , 1:]
+
+scaler_germany = StandardScaler()
+scaler_germany.fit(X_germany)
+scaled_data_germany = scaler_germany.transform(X_germany)
+pca_germany = PCA(n_components=2)
+pca_germany.fit(scaled_data_germany)
+x_pca_Germany = pca_germany.transform(scaled_data_germany) 
+
+import xlsxwriter
+workbook = xlsxwriter.Workbook('Germany_Pca1.xlsx')
+worksheet = workbook.add_worksheet()
+row=1
+col=0
+for pc1,pc2 in (x_pca_Germany):
+    worksheet.write(row,col,pc1)
+    worksheet.write(row,col+1,pc2)
+    row +=1
+workbook.close()
+
+read_file = pd.read_excel ("Germany_Pca1.xlsx")
+read_file.to_csv ("Germany_Pca1.csv", index = None,header=None)
+df_Germany = pd.read_csv("Germany_Pca1.csv", header=None)
+df_Germany = df_Germany.rename(columns={0:"PC1",1:"PC2"})
+df_Germany.to_csv("Germany_Pca1.csv", index=False)
+
+df_Germany = pd.read_csv("Germany_Pca1.csv")
+df_Germany.head()
+
+df_Germany_Short = df_Germany[['PC1','PC2']]
+
+K_Germany=range(2,12)
+wss_Germany = []
+for k in K_Germany:
+    kmeans_G=cluster.KMeans(n_clusters=k,init="k-means++")
+    kmeans_G=kmeans_G.fit(df_Germany_Short)
+    wss_iter_G = kmeans_G.inertia_
+    wss_Germany.append(wss_iter_G)
+
+mycenters_G = pd.DataFrame({'Clusters' : K_Germany, 'WSS' : wss_Germany})
+mycenters_G
+
+number_clusters_Germany = range(2,12)
+plt.plot(number_clusters_Germany,wss_Germany)
+plt.title('The Elbow Method')
+plt.xlabel('Number of clusters')
+plt.ylabel('WCSS')
+
+import sklearn.cluster as cluster
+import sklearn.metrics as metrics
+for i in range(2,10):
+    labels=cluster.KMeans(n_clusters=i,init="k-means++",random_state=200).fit(df_Germany_Short).labels_
+    print ("Silhouette score for k(clusters) = "+str(i)+" is "+str(metrics.silhouette_score(df_Germany_Short,labels,metric="euclidean",sample_size=1000,random_state=200)))
+    
+    kmeans_G = cluster.KMeans(n_clusters=3,init="k-means++")
+kmeans_G = kmeans_G.fit(df_Germany[['PC1','PC2']])
+df_Germany['Clusters'] = kmeans_G.labels_
+sns.scatterplot(x="PC1", y="PC2",hue = 'Clusters',  data=df_Germany)
+
+# USA
+tb4 = pd.read_csv('USA_Output.csv')
+tb4 = tb4.rename(columns = {"Unnamed: 0" : "Accession"})
+s_tb4=tb4.sample(50,axis=0)
+X_USA = s_tb4.iloc[: , 1:]
+
+scaler_USA = StandardScaler()
+scaler_USA.fit(X_USA)
+scaled_data_USA = scaler_USA.transform(X_USA)
+pca_USA = PCA(n_components=2)
+pca_USA.fit(scaled_data_USA)
+x_pca_USA = pca_USA.transform(scaled_data_USA) 
+
+import xlsxwriter
+workbook = xlsxwriter.Workbook('USA_Pca.xlsx')
+worksheet = workbook.add_worksheet()
+row=1
+col=0
+for pc1,pc2 in (x_pca_USA):
+    worksheet.write(row,col,pc1)
+    worksheet.write(row,col+1,pc2)
+    row +=1
+workbook.close()
+
+read_file = pd.read_excel ("USA_Pca.xlsx")
+read_file.to_csv ("USA_Pca.csv", index = None,header=None)
+df_USA = pd.read_csv("USA_Pca.csv", header=None)
+df_USA = df_USA.rename(columns={0:"PC1",1:"PC2"})
+df_USA.to_csv("USA_Pca.csv", index=False)
+
+df_USA = pd.read_csv("USA_Pca.csv")
+df_USA.head()
+
+df_USA_Short = df_USA[['PC1','PC2']]
+
+import sklearn.cluster as cluster
+import sklearn.metrics as metrics
+for i in range(2,10):
+    labels=cluster.KMeans(n_clusters=i,init="k-means++",random_state=200).fit(df_USA_Short).labels_
+    print ("Silhouette score for k(clusters) = "+str(i)+" is "+str(metrics.silhouette_score(df_USA_Short,labels,metric="euclidean",sample_size=1000,random_state=200)))
+
+K_USA=range(2,12)
+wss_USA = []
+for k in K_USA:
+    kmeans_USA=cluster.KMeans(n_clusters=k,init="k-means++")
+    kmeans_USA=kmeans_USA.fit(df_USA_Short)
+    wss_iter_USA = kmeans_USA.inertia_
+    wss_USA.append(wss_iter_USA)
+
+number_clusters_USA = range(2,12)
+plt.plot(number_clusters_USA,wss_USA)
+plt.title('The Elbow Method')
+plt.xlabel('Number of clusters')
+plt.ylabel('WCSS')
+
+mycenters_USA = pd.DataFrame({'Clusters' : K_USA, 'WSS' : wss_USA})
+mycenters_USA
+
+kmeans_USA = cluster.KMeans(n_clusters=4,init="k-means++")
+kmeans_USA = kmeans_USA.fit(df_USA[['PC1','PC2']])
+df_USA['Clusters'] = kmeans_USA.labels_
+sns.scatterplot(x="PC1", y="PC2",hue = 'Clusters',  data=df_USA)
+
+# Bangladesh
+tb5 = pd.read_csv('bangladeshOutput.csv')
+tb5 = tb5.rename(columns = {"Unnamed: 0" : "Accession"})
+s_tb5=tb5.sample(50,axis=0)
+X_Bangladesh = s_tb5.iloc[: , 1:]
+
+scaler_Bangladesh = StandardScaler()
+scaler_Bangladesh.fit(X_Bangladesh)
+scaled_data_Bangladesh = scaler_Bangladesh.transform(X_Bangladesh)
+pca_Bangladesh = PCA(n_components=2)
+pca_Bangladesh.fit(scaled_data_Bangladesh)
+x_pca_bangladesh = pca_Bangladesh.transform(scaled_data_Bangladesh) 
+
+import xlsxwriter
+workbook = xlsxwriter.Workbook('Ban_Pca.xlsx')
+worksheet = workbook.add_worksheet()
+row = 1
+col = 0
+for pc1,pc2 in (x_pca_bangladesh):
+    worksheet.write(row,col,pc1)
+    worksheet.write(row,col+1,pc2)
+    row +=1
+workbook.close()
+
+read_file = pd.read_excel("Ban_Pca.xlsx")
+read_file.to_csv("Ban_Pca.csv",index = None,header=None)
+df_B = pd.read_csv("Ban_Pca.csv", header=None)
+df_B = df_B.rename(columns={0:"PC1",1:"PC2"})
+df_B.to_csv("Ban_Pca.csv", index=False)
+
+df_B = pd.read_csv("Ban_Pca.csv")
+df_B.head()
+
+df_B_Short = df_B[['PC1','PC2']]
+
+import sklearn.cluster as cluster
+import sklearn.metrics as metrics
+for i in range(2,10):
+    labels=cluster.KMeans(n_clusters=i,init="k-means++",random_state=200).fit(df_B_Short).labels_
+    print ("Silhouette score for k(clusters) = "+str(i)+" is "+str(metrics.silhouette_score(df_B_Short,labels,metric="euclidean",sample_size=1000,random_state=200)))
+
+K_B=range(2,12)
+wss_B = []
+for k in K_B:
+    kmeans_B=cluster.KMeans(n_clusters=k,init="k-means++")
+    kmeans_B=kmeans_B.fit(df_B_Short)
+    wss_iter_B = kmeans_B.inertia_
+    wss_B.append(wss_iter_B)
+
+number_clusters_B = range(2,12)
+plt.plot(number_clusters_B,wss_B)
+plt.title('The Elbow Method')
+plt.xlabel('Number of clusters')
+plt.ylabel('WCSS')
+
+mycenters_B = pd.DataFrame({'Clusters' : K_B, 'WSS' : wss_B})
+mycenters_B
+
+kmeans_B = cluster.KMeans(n_clusters=3,init="k-means++")
+kmeans_B = kmeans_B.fit(df_B[['PC1','PC2']])
+df_B['Clusters'] = kmeans_B.labels_
+sns.scatterplot(x="PC1", y="PC2",hue = 'Clusters',  data=df_B)
+
+# UK
+tb6 = pd.read_csv('UKOutput.csv')
+tb6 = tb6.rename(columns = {"Unnamed: 0" : "Accession"})
+s_tb6=tb6.sample(100,axis=0)
+X_UK = s_tb6.iloc[: , 1:]
+
+scaler_UK = StandardScaler()
+scaler_UK.fit(X_UK)
+scaled_data_UK= scaler_UK.transform(X_UK)
+pca_UK = PCA(n_components=2)
+pca_UK.fit(scaled_data_UK)
+x_pca_UK = pca_UK.transform(scaled_data_UK)
+
+import xlsxwriter
+workbook = xlsxwriter.Workbook('UK_Pca.xlsx')
+worksheet = workbook.add_worksheet()
+row = 1
+col = 0
+for pc1,pc2 in (x_pca_UK):
+    worksheet.write(row,col,pc1)
+    worksheet.write(row,col+1,pc2)
+    row +=1
+workbook.close()
+
+read_file = pd.read_excel("UK_Pca.xlsx")
+read_file.to_csv("UK_Pca.csv",index = None,header=None)
+df_UK = pd.read_csv("UK_Pca.csv", header=None)
+df_UK = df_UK.rename(columns={0:"PC1",1:"PC2"})
+df_UK.to_csv("UK_Pca.csv", index=False)
+
+df_UK = pd.read_csv("UK_Pca.csv")
+df_UK.head()
+
+df_UK_Short = df_UK[['PC1','PC2']]
+
+import sklearn.cluster as cluster
+import sklearn.metrics as metrics
+for i in range(2,10):
+    labels=cluster.KMeans(n_clusters=i,init="k-means++",random_state=200).fit(df_UK_Short).labels_
+    print ("Silhouette score for k(clusters) = "+str(i)+" is "+str(metrics.silhouette_score(df_UK_Short,labels,metric="euclidean",sample_size=1000,random_state=200)))
+
+K_UK=range(2,12)
+wss_UK = []
+for k in K_UK:
+    kmeans_UK=cluster.KMeans(n_clusters=k,init="k-means++")
+    kmeans_UK=kmeans_UK.fit(df_UK_Short)
+    wss_iter_UK = kmeans_UK.inertia_
+    wss_UK.append(wss_iter_UK)
+
+number_clusters_UK = range(2,12)
+plt.plot(number_clusters_UK,wss_UK)
+plt.title('The Elbow Method')
+plt.xlabel('Number of clusters')
+plt.ylabel('WCSS')
+
+mycenters_UK = pd.DataFrame({'Clusters' : K_UK, 'WSS' : wss_UK})
+mycenters_UK
+
+kmeans_UK = cluster.KMeans(n_clusters=3,init="k-means++")
+kmeans_UK = kmeans_UK.fit(df_UK[['PC1','PC2']])
+df_UK['Clusters'] = kmeans_UK.labels_
+sns.scatterplot(x="PC1", y="PC2",hue = 'Clusters',data=df_UK)
+
+all = np.concatenate((x_pca, x_pca_Japan,x_pca_Germany,x_pca_USA,x_pca_bangladesh,x_pca_UK))
+
+all
+
+all.shape
+
+import xlsxwriter
+workbook = xlsxwriter.Workbook('all_pca.xlsx')
+worksheet = workbook.add_worksheet()
+row = 1
+col = 0
+for pc1,pc2 in (all):
+    worksheet.write(row,col,pc1)
+    worksheet.write(row,col+1,pc2)
+    row +=1
+workbook.close()
+
+read_file = pd.read_excel("all_pca.xlsx")
+read_file.to_csv("All.csv",index = None,header=None)
+df_all = pd.read_csv("All.csv", header=None)
+df_all= df_all.rename(columns={0:"PC1",1:"PC2"})
+df_all.to_csv("All.csv", index=False)
+
+# Elbow Method
+df_all_Short = df_all[['PC1','PC2']]
+
+K_all=range(2,15)
+wss_all = []
+for k in K_all:
+    kmeans_all=cluster.KMeans(n_clusters=k,init="k-means++")
+    kmeans_all=kmeans_all.fit(df_all_Short)
+    wss_iter_all = kmeans_all.inertia_
+    wss_all.append(wss_iter_all)
+
+number_clusters_all = range(2,15)
+plt.plot(number_clusters_all,wss_all)
+plt.title('The Elbow Method')
+plt.xlabel('Number of clusters')
+plt.ylabel('WCSS')
+
+mycenters_all = pd.DataFrame({'Clusters' : K_all, 'WSS' : wss_all})
+mycenters_all
+
+kmeans_all = cluster.KMeans(n_clusters=4,init="k-means++")
+kmeans_all = kmeans_all.fit(df_all[['PC1','PC2']])
+df_all['Clusters'] = kmeans_all.labels_
+sns.scatterplot(x="PC1", y="PC2",hue = 'Clusters',data=df_all)
+
+kmeans_all = cluster.KMeans(n_clusters=5,init="k-means++")
+kmeans_all = kmeans_all.fit(df_all[['PC1','PC2']])
+df_all['Clusters'] = kmeans_all.labels_
+sns.scatterplot(x="PC1", y="PC2",hue = 'Clusters',data=df_all)
+
+kmeans_all = cluster.KMeans(n_clusters=6,init="k-means++")
+kmeans_all = kmeans_all.fit(df_all[['PC1','PC2']])
+df_all['Clusters'] = kmeans_all.labels_
+sns.scatterplot(x="PC1", y="PC2",hue = 'Clusters',data=df_all)
+
+dataset = pd.read_csv('All.csv')  
+
+x = dataset.iloc[:, [0, 1]].values  
+
+import scipy.cluster.hierarchy as shc  
+import matplotlib.pyplot as mtp  
+dendro = shc.dendrogram(shc.linkage(x, method="ward"))  
+mtp.axhline(y=50)
+mtp.title("Dendrogrma Plot")  
+mtp.ylabel("Euclidean Distances")  
+mtp.xlabel("Customers")  
+mtp.show()  
+
+from sklearn.cluster import AgglomerativeClustering  
+hc= AgglomerativeClustering(n_clusters=4, affinity='euclidean', linkage='ward')  
+y_pred= hc.fit_predict(x)  
+
+mtp.scatter(x[y_pred == 0, 0], x[y_pred == 0, 1], s = 100, c = 'blue', label = 'Cluster 1')  
+mtp.scatter(x[y_pred == 1, 0], x[y_pred == 1, 1], s = 100, c = 'green', label = 'Cluster 2')  
+mtp.scatter(x[y_pred== 2, 0], x[y_pred == 2, 1], s = 100, c = 'red', label = 'Cluster 3')  
+mtp.scatter(x[y_pred == 3, 0], x[y_pred == 3, 1], s = 100, c = 'cyan', label = 'Cluster 4')  
+mtp.title('Clusters')  
+mtp.xlabel('PC1')  
+mtp.ylabel('PC2')
+mtp.legend()  
+mtp.show()  
+
+from sklearn.cluster import KMeans  
+wcss_list= []  #Initializing the list for the values of WCSS  
+  
+#Using for loop for iterations from 1 to 10.  
+for i in range(2, 11):  
+    kmeans = KMeans(n_clusters=i, init='k-means++', random_state= 42)  
+    kmeans.fit(x)  
+    wcss_list.append(kmeans.inertia_)  
+mtp.plot(range(2, 11), wcss_list)  
+mtp.title('The Elobw Method Graph')  
+mtp.xlabel('Number of clusters(k)')  
+mtp.ylabel('wcss_list')  
+mtp.show()  
+
+#training the K-means model on a dataset  
+kmeans = KMeans(n_clusters=2, init='k-means++', random_state= 42)  
+y_predict= kmeans.fit_predict(x)  
+
+y_predict
+
+#visulaizing the clusters  
+mtp.scatter(x[y_predict == 0, 0], x[y_predict == 0, 1], s = 100, c = 'blue', label = 'Cluster 1') #for first cluster  
+mtp.scatter(x[y_predict == 1, 0], x[y_predict == 1, 1], s = 100, c = 'green', label = 'Cluster 2') #for second cluster  
+mtp.scatter(x[y_predict== 2, 0], x[y_predict == 2, 1], s = 100, c = 'red', label = 'Cluster 3') #for third cluster  
+mtp.scatter(x[y_predict == 3, 0], x[y_predict == 3, 1], s = 100, c = 'cyan', label = 'Cluster 4') #for fourth cluster  
+#mtp.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s = 300, c = 'yellow', label = 'Centroid')   
+mtp.title('Clusters')  
+mtp.xlabel('PC1')
+mtp.ylabel('PC2')
+mtp.legend()  
+mtp.show()  
+
