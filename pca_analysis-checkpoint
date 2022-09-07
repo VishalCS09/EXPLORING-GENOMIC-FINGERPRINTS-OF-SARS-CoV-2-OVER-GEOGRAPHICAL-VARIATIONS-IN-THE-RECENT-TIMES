@@ -1,0 +1,131 @@
+import matplotlib.lines as mlines
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+import seaborn as sns
+%matplotlib inline
+cd D:\\projects\major project\kmer distribution outputs 
+tb1 = pd.read_csv('IndiaOutput.csv')
+tb1
+
+tb1 = tb1.rename(columns = {"Unnamed: 0" : "Accession"})
+tb1
+
+X = tb1.iloc[: , 1:]
+X
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+scaler = StandardScaler()
+scaler.fit(X)
+
+scaled_data = scaler.transform(X)
+pca = PCA(n_components=2)
+pca.fit(scaled_data)
+x_pca = pca.transform(scaled_data) 
+plt.figure(figsize=(5,5))
+plt.scatter(x_pca[:,0],x_pca[:,1],c="purple")
+plt.xlabel('First division feature')
+plt.ylabel('Second division feature')
+
+tb2 = pd.read_csv('JapanOutput.csv')
+tb2 = tb2.rename(columns = {"Unnamed: 0" : "Accession"})
+X_Japan = tb2.iloc[: , 1:]
+X_Japan
+
+
+scaler = StandardScaler()
+scaler.fit(X_Japan)
+
+scaled_data = scaler.transform(X_Japan)
+pca = PCA(n_components=2)
+pca.fit(scaled_data)
+x_pca_Japan = pca.transform(scaled_data) 
+plt.figure(figsize=(5,5))
+plt.scatter(x_pca_Japan[:,0],x_pca_Japan[:,1],c="red")
+plt.xlabel('First division feature')
+plt.ylabel('Second division feature')
+
+tb3 = pd.read_csv('GermanyOutput.csv')
+tb3 = tb3.rename(columns = {"Unnamed: 0" : "Accession"})
+X_Germany = tb3.iloc[: , 1:]
+X_Germany
+
+
+scaler = StandardScaler()
+scaler.fit(X_Germany)
+
+scaled_data = scaler.transform(X_Germany)
+pca = PCA(n_components=2)
+pca.fit(scaled_data)
+x_pca_Germany = pca.transform(scaled_data) 
+plt.figure(figsize=(5,5))
+plt.scatter(x_pca_Germany[:,0],x_pca_Germany[:,1],c="green")
+plt.xlabel('First division feature')
+plt.ylabel('Second division feature')
+
+tb4 = pd.read_csv('USA_Output.csv')
+tb4 = tb4.rename(columns = {"Unnamed: 0" : "Accession"})
+X_USA = tb4.iloc[: , 1:]
+X_USA
+
+
+scaler = StandardScaler()
+scaler.fit(X_USA)
+
+scaled_data = scaler.transform(X_USA)
+pca = PCA(n_components=2)
+pca.fit(scaled_data)
+x_pca_USA = pca.transform(scaled_data) 
+plt.figure(figsize=(5,5))
+plt.scatter(x_pca_USA[:,0],x_pca_USA[:,1],c="black")
+plt.xlabel('First division feature')
+plt.ylabel('Second division feature')
+
+tb5 = pd.read_csv('bangladeshOutput.csv')
+tb5 = tb5.rename(columns = {"Unnamed: 0" : "Accession"})
+X_bangladesh = tb5.iloc[: , 1:]
+X_bangladesh
+
+scaler = StandardScaler()
+scaler.fit(X_bangladesh)
+
+scaled_data = scaler.transform(X_bangladesh)
+pca = PCA(n_components=2)
+pca.fit(scaled_data)
+x_pca_bangladesh = pca.transform(scaled_data) 
+plt.figure(figsize=(5,5))
+plt.scatter(x_pca_bangladesh[:,0],x_pca_bangladesh[:,1],c="yellow")
+plt.xlabel('First division feature')
+plt.ylabel('Second division feature')
+
+tb6 = pd.read_csv('UKOutput.csv')
+tb6 = tb6.rename(columns = {"Unnamed: 0" : "Accession"})
+X_UK = tb6.iloc[: , 1:]
+X_UK
+
+scaler = StandardScaler()
+scaler.fit(X_UK)
+
+scaled_data = scaler.transform(X_UK)
+pca = PCA(n_components=2)
+pca.fit(scaled_data)
+x_pca_UK = pca.transform(scaled_data) 
+plt.figure(figsize=(5,5))
+plt.scatter(x_pca_UK[:,0],x_pca_UK[:,1],c="blue")
+plt.xlabel('First division feature')
+plt.ylabel('Second division feature')
+
+plt.figure(figsize=(10,8))
+plt.scatter(x_pca[:,0],x_pca[:,1], c ="purple",linewidths = 2, marker ="P", s = 100)
+plt.scatter(x_pca_Japan[:,0],x_pca_Japan[:,1], c ="Red",linewidths = 2,marker ="^",  s = 100)
+plt.scatter(x_pca_Germany[:,0],x_pca_Germany[:,1], c ="green",linewidths = 2,marker ="*", s = 100)
+plt.scatter(x_pca_USA[:,0],x_pca_USA[:,1], c ="Black",linewidths = 2,marker ="x", s = 100)
+plt.scatter(x_pca_bangladesh[:,0],x_pca_bangladesh[:,1], c ="yellow",linewidths = 2,marker ="8", s = 100)
+plt.scatter(x_pca_UK[:,0],x_pca_UK[:,1], c ="blue",linewidths = 2,marker ="+", s = 100)
+plt.legend(['Indian','Japan','Germany','USA','Bangladesh','UK'],loc="upper right")
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.show()
+
