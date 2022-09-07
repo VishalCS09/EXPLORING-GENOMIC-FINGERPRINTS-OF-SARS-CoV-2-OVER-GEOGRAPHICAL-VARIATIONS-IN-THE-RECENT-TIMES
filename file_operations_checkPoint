@@ -1,0 +1,71 @@
+#splitting 
+import os  
+sequences = open('datasets/bangladesh.txt','r').read().split('>')[1:]
+for i in range(0,len(sequences)):
+    open(f'datasets2/bangladesh/Sequencee_{i+1}.txt','w').write(sequences[i])
+
+    
+#Renaming each sample file to its accession number
+for i in range(0,len(sequences)):
+    name=open(f'datasets2/bangladesh/Sequencee_{i+1}.txt','r').read().split()
+    os.rename(f'datasets2/bangladesh/Sequencee_{i+1}.txt','datasets2/bangladesh/'+name[0]+'.txt')
+    
+    #splitting 
+import os  
+sequences = open('datasets/Germany.txt','r').read().split('>')[1:]
+for i in range(0,len(sequences)):
+    open(f'datasets2/Germany/Sequencee_{i+1}.txt','w').write(sequences[i])
+
+    
+#Renaming each sample file to its accession number
+for i in range(0,len(sequences)):
+    name=open(f'datasets2/Germany/Sequencee_{i+1}.txt','r').read().split()
+    os.rename(f'datasets2/Germany/Sequencee_{i+1}.txt','datasets2/Germany/'+name[0]+'.txt')
+    
+    #splitting 
+import os  
+sequences = open('datasets/U.S.A.txt','r').read().split('>')[1:]
+for i in range(0,len(sequences)):
+    open(f'datasets2/U.S.A/Sequencee_{i+1}.txt','w').write(sequences[i])
+
+    
+#Renaming each sample file to its accession number
+for i in range(0,len(sequences)):
+    name=open(f'datasets2/U.S.A/Sequencee_{i+1}.txt','r').read().split()
+    os.rename(f'datasets2/U.S.A/Sequencee_{i+1}.txt','datasets2/U.S.A/'+name[0]+'.txt')
+    
+    #splitting 
+import os  
+sequences = open('datasets/U.K.txt','r').read().split('>')[1:]
+for i in range(0,len(sequences)):
+    open(f'datasets2/U.K/Sequencee_{i+1}.txt','w').write(sequences[i])
+
+    
+#Renaming each sample file to its accession number
+for i in range(0,len(sequences)):
+    name=open(f'datasets2/U.K/Sequencee_{i+1}.txt','r').read().split()
+    os.rename(f'datasets2/U.K/Sequencee_{i+1}.txt','datasets2/U.K/'+name[0]+'.txt')
+    
+    #splitting 
+import os  
+sequences = open('datasets/Japan.txt','r').read().split('>')[1:]
+for i in range(0,len(sequences)):
+    open(f'datasets2/Japan/Sequencee_{i+1}.txt','w').write(sequences[i])
+
+    
+#Renaming each sample file to its accession number
+for i in range(0,len(sequences)):
+    name=open(f'datasets2/Japan/Sequencee_{i+1}.txt','r').read().split()
+    os.rename(f'datasets2/Japan/Sequencee_{i+1}.txt','datasets2/Japan/'+name[0]+'.txt')
+    
+    #splitting 
+import os  
+sequences = open('datasets/India.txt','r').read().split('>')[1:]
+for i in range(0,len(sequences)):
+    open(f'datasets2/India/Sequencee_{i+1}.txt','w').write(sequences[i])
+
+    
+#Renaming each sample file to its accession number
+for i in range(0,len(sequences)):
+    name=open(f'datasets2/India/Sequencee_{i+1}.txt','r').read().split()
+    os.rename(f'datasets2/India/Sequencee_{i+1}.txt','datasets2/India/'+name[0]+'.txt')
